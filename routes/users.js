@@ -1,4 +1,5 @@
 var express = require('express');
+var schedule = require('node-schedule');
 var router = express.Router();
 // const { NameFilter, addKey } = require('../utils/index')
 // const { progress } = require('../db/config')
@@ -66,18 +67,28 @@ const executeList = [
   ksd_3,
   zs
 ]
-
+let number = 1
 let ZC_Status = true
 router.get('/', async function(req, res, next) {
   if (ZC_Status) {
     ZC_Status = false
-    setInterval(() => {
+    // setInterval(() => {
+    //   executeList.forEach( fun => {
+    //     setTimeout( () => {
+    //       fun()
+    //     },5000)
+    //   })
+    // }, 3600000)
+
+    schedule.scheduleJob('30 * * * * *', function(){
       executeList.forEach( fun => {
         setTimeout( () => {
           fun()
-        },5000)
+        },2000)
       })
-    }, 3600000)
+      number++
+      console.log('启动次数' + `${number}` + new Date());
+    }); 
     res.json({data: '启动成功'});
   } else {
     res.json({data: '已经启动过了'});
